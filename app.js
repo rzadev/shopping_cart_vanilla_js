@@ -7,36 +7,33 @@
 }); */
 // console.log(client);
 
-
 // Variables
-const cartBtn = document.querySelector('.cart-btn');
-const closeCartBtn = document.querySelector('.close-cart');
-const clearCartBtn = document.querySelector('.clear-cart');
-const cartDOM = document.querySelector('.cart');
-const cartOverlay = document.querySelector('.cart-overlay');
-const cartItems = document.querySelector('.cart-items');
-const cartTotal = document.querySelector('.cart-total');
-const cartContent = document.querySelector('.cart-content');
-const productsDOM = document.querySelector('.products-center');
+const cartBtn = document.querySelector(".cart-btn");
+const closeCartBtn = document.querySelector(".close-cart");
+const clearCartBtn = document.querySelector(".clear-cart");
+const cartDOM = document.querySelector(".cart");
+const cartOverlay = document.querySelector(".cart-overlay");
+const cartItems = document.querySelector(".cart-items");
+const cartTotal = document.querySelector(".cart-total");
+const cartContent = document.querySelector(".cart-content");
+const productsDOM = document.querySelector(".products-center");
 
 // Main cart
 let cart = [];
 // buttons
 let buttonsDOM = [];
 
-
 // Getting the products
 class Products {
   async getProducts() {
     try {
-
       // let contentful = await client.getEntries({
       //   content_type: 'comfyHouseProducts'
       // });
       // console.log(contentful);
 
-
-      let result = await fetch("products.json");
+      // let result = await fetch("products.json");
+      let result = await fetch("furniture.json");
       let data = await result.json();
 
       // Use JSON data from the local JSON file
@@ -51,7 +48,7 @@ class Products {
         const { id } = item.sys;
         const image = item.fields.image.fields.file.url;
         return { title, price, id, image };
-      })
+      });
       return products;
     } catch (error) {
       console.log(error);
@@ -63,7 +60,7 @@ class Products {
 class UI {
   displayProducts(products) {
     // console.log(products);
-    let result = '';
+    let result = "";
     products.forEach(product => {
       result += `
       <!-- single product -->
@@ -86,7 +83,7 @@ class UI {
 
   getBagButtons() {
     // Select all the add to bag buttons after the product loaded
-    const buttons = [...document.querySelectorAll('.bag-btn')];
+    const buttons = [...document.querySelectorAll(".bag-btn")];
     buttonsDOM = buttons;
     // console.log(buttons);
     buttons.forEach(button => {
@@ -99,7 +96,7 @@ class UI {
         button.innerText = "In Cart";
         button.disabled = true;
       }
-      button.addEventListener('click', (event) => {
+      button.addEventListener("click", event => {
         // console.log(event);
         event.target.innerText = "In Cart";
         event.target.disabled = true;
@@ -132,7 +129,7 @@ class UI {
     cart.map(item => {
       tempTotal += item.price * item.amount;
       itemsTotal += item.amount;
-    })
+    });
 
     // Show total price on the cart
     cartTotal.innerText = parseFloat(tempTotal.toFixed(2));
@@ -143,8 +140,8 @@ class UI {
   }
 
   addCartItem(item) {
-    const div = document.createElement('div');
-    div.classList.add('cart-item');
+    const div = document.createElement("div");
+    div.classList.add("cart-item");
     div.innerHTML = `<img src=${item.image} alt="product">
     <div>
       <h4>${item.title}</h4>
@@ -162,8 +159,8 @@ class UI {
 
   // Show cart when the product clicks
   showCart() {
-    cartOverlay.classList.add('transparentBcg');
-    cartDOM.classList.add('showCart');
+    cartOverlay.classList.add("transparentBcg");
+    cartDOM.classList.add("showCart");
   }
 
   setupAPP() {
@@ -171,8 +168,8 @@ class UI {
     cart = Storage.getCart();
     this.setCartValues(cart);
     this.populateCart(cart);
-    cartBtn.addEventListener('click', this.showCart);
-    closeCartBtn.addEventListener('click', this.hideCart);
+    cartBtn.addEventListener("click", this.showCart);
+    closeCartBtn.addEventListener("click", this.hideCart);
   }
 
   // Populate data to the cart
@@ -182,13 +179,13 @@ class UI {
 
   // Hide cart when the x button clicks
   hideCart() {
-    cartOverlay.classList.remove('transparentBcg');
-    cartDOM.classList.remove('showCart');
+    cartOverlay.classList.remove("transparentBcg");
+    cartDOM.classList.remove("showCart");
   }
 
   cartLogic() {
     // clear cart button
-    clearCartBtn.addEventListener('click', () => {
+    clearCartBtn.addEventListener("click", () => {
       this.clearCart();
     });
 
@@ -196,7 +193,7 @@ class UI {
     /* Listen to the click event on the cart using event bubbling
        remove button, incerase and decrease icon
     */
-    cartContent.addEventListener('click', event => {
+    cartContent.addEventListener("click", event => {
       // console.log(event.target);
 
       // Select an element base on the class
@@ -240,19 +237,12 @@ class UI {
           Storage.saveCart(cart);
           this.setCartValues(cart);
           lowerAmount.previousElementSibling.innerText = tempItem.amount;
-        }
-        else {
+        } else {
           cartContent.removeChild(lowerAmount.parentElement.parentElement);
           this.removeItem(id);
         }
-
-
       }
-
-
     });
-
-
   }
 
   clearCart() {
@@ -265,7 +255,6 @@ class UI {
     cartItems.forEach(id => this.removeItem(id));
     // console.log(cartContent.children);
 
-
     // Empty the cart
     while (cartContent.children.length > 0) {
       cartContent.removeChild(cartContent.children[0]);
@@ -275,10 +264,10 @@ class UI {
   }
 
   removeItem(id) {
-    // Filter items from the cart 
+    // Filter items from the cart
     cart = cart.filter(item => item.id !== id);
 
-    // Reset the cart 
+    // Reset the cart
     this.setCartValues(cart);
 
     // Get the lates information about the cart
@@ -293,7 +282,6 @@ class UI {
   getSingleButton(id) {
     return buttonsDOM.find(button => button.dataset.id === id);
   }
-
 }
 
 // Local storage
@@ -305,7 +293,7 @@ class Storage {
 
   // Get product from local storage
   static getProduct(id) {
-    let products = JSON.parse(localStorage.getItem('products'));
+    let products = JSON.parse(localStorage.getItem("products"));
     return products.find(product => product.id === id);
   }
 
@@ -316,13 +304,14 @@ class Storage {
 
   static getCart() {
     // Check jika ada item di cart
-    return localStorage.getItem('cart') ? JSON.parse(localStorage.getItem('cart')) : [];
+    return localStorage.getItem("cart")
+      ? JSON.parse(localStorage.getItem("cart"))
+      : [];
   }
-
 }
 
 // Event listener
-document.addEventListener('DOMContentLoaded', () => {
+document.addEventListener("DOMContentLoaded", () => {
   const ui = new UI();
   const products = new Products();
 
@@ -330,35 +319,14 @@ document.addEventListener('DOMContentLoaded', () => {
   ui.setupAPP();
 
   // Get all products
-  products.getProducts().then(products => {
-    ui.displayProducts(products);
-    Storage.saveProduct(products);
-  }).then(() => {
-    ui.getBagButtons();
-    ui.cartLogic();
-  });
+  products
+    .getProducts()
+    .then(products => {
+      ui.displayProducts(products);
+      Storage.saveProduct(products);
+    })
+    .then(() => {
+      ui.getBagButtons();
+      ui.cartLogic();
+    });
 });
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
